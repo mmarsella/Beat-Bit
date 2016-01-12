@@ -61,7 +61,9 @@ function create() {
 
 
     game.physics.arcade.enable([ sprite1,platform,sprite3,sprite4,sprite5,rectA ], Phaser.Physics.ARCADE);
-    rectA.body.setSize(50, 200, 200, 50); // set the size of the rectangle
+    
+    // setSize --> (width,height, x, y)  top of canvas is y = 0, left x = 0
+    rectA.body.setSize(30, 100, 200, 50); // set the size of the rectangle
 /*
 ***TWEEN***
 
@@ -135,11 +137,7 @@ function processHandler(obj1,obj2){
       console.log("LEFT IS HIT!");
       game.stage.backgroundColor = '#00FFFF';
       obj1.destroy();
-      if(obj1.group){   
-        obj1.group.remove(obj);}
-      else if(obj1.parent){
-        obj1.parent.removeChild(obj1);
-      }
+     
     }else if(cursors.right.isDown){
        console.log("Right IS HIT!");
       game.stage.backgroundColor = '#006400';
