@@ -31,7 +31,8 @@ function create() {
 
 
     // 200 X 200 from the bottom of game
-    rectA = game.add.sprite(200, 200, null);
+    rectA = game.add.sprite(0, 0, null);
+    rectB = game.add.sprite(0, 0, null);
     // game.physics.enable(rectA, Phaser.Physics.ARCADE);
 
     // rectB = game.add.sprite(0, 0, null);
@@ -49,6 +50,7 @@ function create() {
 
     sprite1 = game.add.sprite(400, 50, 'block');
     platform = game.add.sprite(200, 450, 'platform');
+    // platform = game.add.sprite(200, 450, 'platform');
     sprite3 = game.add.sprite(200, 50, 'block');
     sprite4 = game.add.sprite(200, 50, 'block');
     sprite5 = game.add.sprite(200, 50, 'block');
@@ -60,10 +62,11 @@ function create() {
 
 
 
-    game.physics.arcade.enable([ sprite1,platform,sprite3,sprite4,sprite5,rectA ], Phaser.Physics.ARCADE);
+    game.physics.arcade.enable([ sprite1,platform,sprite3,sprite4,sprite5,rectA,rectB ], Phaser.Physics.ARCADE);
     
     // setSize --> (width,height, x, y)  top of canvas is y = 0, left x = 0
-    rectA.body.setSize(30, 100, 200, 50); // set the size of the rectangle
+    rectA.body.setSize(30, 150, 200, 50); // set the size of the rectangle
+    rectB.body.setSize(30, 150, 400, 50); // set the size of the rectangle
 /*
 ***TWEEN***
 
@@ -88,7 +91,10 @@ A Tween allows you to alter one or more properties of a target object over
     // game.add.tween(sprite4).to( { y: 600 }, 10000, Phaser.Easing.Linear.None, true);
     // game.add.tween(sprite5).to( { y: 600 }, 11000, Phaser.Easing.Linear.None, true);
     game.add.tween(rectA).to( { y: 600 }, 8000, Phaser.Easing.Linear.None, true);
-
+    game.add.tween(rectB).to( { y: 600 }, 8000, Phaser.Easing.Linear.None, true);
+    rectA.origHeight = rectA.body.height;
+    rectB.origHeight = rectB.body.height;
+    console.log("RECT A",rectA);
     cursors = game.input.keyboard.createCursorKeys();
 }
 
@@ -99,22 +105,21 @@ function update() {
     // console.log(rectA.y);
 
 
-    if(sprite1.onOutOfBounds){
-      console.log("OUT OF BOUNDS!");
-    }
+    // if(sprite1.onOutOfBounds){
+    //   console.log("OUT OF BOUNDS!");
+    // }
 
-     if (cursors.up.isDown)
-    {
-      console.log("UP IS HIT!");
-      // game.stage.backgroundColor = '#00FFFF';
-      rectA.height--;
-    }
+   
 
 
     // game.physics.arcade.collide(rectA, horiz, collisionHandler, null, this);
     // game.physics.arcade.collide(rectB, horiz, collisionHandler, null, this);
     //check for overlap, passing in 2 callbacks
     game.physics.arcade.overlap(rectA, platform, overlapHandler, processHandler, this);
+    game.physics.arcade.overlap(rectB, platform, overlapHandler, processHandler2, this);
+    
+
+
     game.physics.arcade.overlap(sprite3, platform, overlapHandler, processHandler, this);
     game.physics.arcade.overlap(sprite4, platform, overlapHandler, processHandler, this);
     game.physics.arcade.overlap(sprite5, platform, overlapHandler, processHandler, this);
@@ -132,15 +137,48 @@ function processHandler(obj1,obj2){
     return true;
   }else{
     // console.log("FALSE!");
-    if (cursors.left.isDown)
+
+    // BIG NOTE
+    if (cursors.left.isDown && obj1.origHeight >= 150)
     {
+      obj1.height--;
       console.log("LEFT IS HIT!");
-      game.stage.backgroundColor = '#00FFFF';
-      obj1.destroy();
-     
-    }else if(cursors.right.isDown){
+      // game.stage.backgroundColor = '#00FFFF';
+      if(obj1.height <= 0){
+        obj1.destroy();
+        console.log("DESTROYED!");
+      }
+    }else if(cursors.left.isDown){
+       obj1.destroy();
        console.log("Right IS HIT!");
-      game.stage.backgroundColor = '#006400';
+      // game.stage.backgroundColor = '#006400';
+    }
+    return false;
+  }
+}
+
+function processHandler2(obj1,obj2){
+  // console.log("PROCESS HANDLER..");
+  if(obj1.y > obj2.y){
+    // console.log("TRUE!");
+    return true;
+  }else{
+    // console.log("FALSE!");
+
+    // BIG NOTE
+    if (cursors.right.isDown && obj1.origHeight >= 150)
+    {
+      obj1.height--;
+      console.log("LEFT IS HIT!");
+      // game.stage.backgroundColor = '#00FFFF';
+      if(obj1.height <= 0){
+        obj1.destroy();
+        console.log("DESTROYED!");
+      }
+    }else if(cursors.right.isDown){
+       obj1.destroy();
+       console.log("Right IS HIT!");
+      // game.stage.backgroundColor = '#006400';
     }
     return false;
   }
@@ -164,6 +202,7 @@ function overlapHandler (obj1, obj2) {
 function render() {
 
     game.debug.body(rectA, 'rgba(200,0,0,0.5)');
+    game.debug.body(rectB, 'rgba(200,0,0,0.5)');
     // game.debug.geom(rectB, 'rgba(0,0,255,0.5)');
 
     // // var intersects = Phaser.Rectangle.intersection(rectA, rectB);
