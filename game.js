@@ -17,9 +17,15 @@ var sprite5;
 var cursors;
 var rectA;
 var rectB;
+var rectC;
 var horiz;
+var A;
+
+var notes;
 
 function create() {
+
+    A = game.input.keyboard.addKey(Phaser.Keyboard.A);
 
     game.physics.setBoundsToWorld();
 
@@ -30,9 +36,18 @@ function create() {
     // rectA = new Phaser.Rectangle(350, 50, 50, 200);
 
 
+
+
+
+    /* Attempt to make a GROUP */ 
+
+    notes = game.add.group();
+
+
     // 200 X 200 from the bottom of game
     rectA = game.add.sprite(0, 0, null);
     rectB = game.add.sprite(0, 0, null);
+    rectC = game.add.sprite(0, 0, null);
     // game.physics.enable(rectA, Phaser.Physics.ARCADE);
 
     // rectB = game.add.sprite(0, 0, null);
@@ -62,11 +77,12 @@ function create() {
 
 
 
-    game.physics.arcade.enable([ sprite1,platform,sprite3,sprite4,sprite5,rectA,rectB ], Phaser.Physics.ARCADE);
+    game.physics.arcade.enable([ sprite1,platform,sprite3,sprite4,sprite5,rectA,rectB,rectC ], Phaser.Physics.ARCADE);
     
     // setSize --> (width,height, x, y)  top of canvas is y = 0, left x = 0
     rectA.body.setSize(30, 150, 200, 50); // set the size of the rectangle
     rectB.body.setSize(30, 150, 400, 50); // set the size of the rectangle
+    rectC.body.setSize(30, 150, 300, 50); // set the size of the rectangle
 /*
 ***TWEEN***
 
@@ -90,8 +106,9 @@ A Tween allows you to alter one or more properties of a target object over
     // game.add.tween(sprite3).to( { y: 600 }, 8000, Phaser.Easing.Linear.None, true);
     // game.add.tween(sprite4).to( { y: 600 }, 10000, Phaser.Easing.Linear.None, true);
     // game.add.tween(sprite5).to( { y: 600 }, 11000, Phaser.Easing.Linear.None, true);
-    game.add.tween(rectA).to( { y: 600 }, 8000, Phaser.Easing.Linear.None, true);
-    game.add.tween(rectB).to( { y: 600 }, 8000, Phaser.Easing.Linear.None, true);
+    game.add.tween(rectA).to( { y: 600 }, 2000, Phaser.Easing.Linear.None, true);
+    game.add.tween(rectB).to( { y: 600 }, 2000, Phaser.Easing.Linear.None, true);
+    game.add.tween(rectC).to( { y: 600 }, 5000, Phaser.Easing.Linear.None, true);
     rectA.origHeight = rectA.body.height;
     rectB.origHeight = rectB.body.height;
     console.log("RECT A",rectA);
@@ -139,7 +156,7 @@ function processHandler(obj1,obj2){
     // console.log("FALSE!");
 
     // BIG NOTE
-    if (cursors.left.isDown && obj1.origHeight >= 150)
+    if (A.isDown && obj1.origHeight >= 150)
     {
       obj1.height--;
       console.log("LEFT IS HIT!");
@@ -148,7 +165,7 @@ function processHandler(obj1,obj2){
         obj1.destroy();
         console.log("DESTROYED!");
       }
-    }else if(cursors.left.isDown){
+    }else if(A.isDown){
        obj1.destroy();
        console.log("Right IS HIT!");
       // game.stage.backgroundColor = '#006400';
@@ -217,3 +234,23 @@ function render() {
 }
 
 }
+
+/*
+   Overlap will persist until fully outside.
+
+   Overlap vs. collision????
+
+   Cut at halfway point instead???
+
+*/
+
+/*
+  SCORING
+
+  Decrement total score by the height of sprites passed by the bar.
+
+  Ex:  If a long note only gets held until 10% of its length, take whatever
+  has passed off the screen off total score....
+
+
+*/
