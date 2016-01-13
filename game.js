@@ -69,9 +69,15 @@ function create() {
     // console.log(rectB.x);
 
 
-    sprite1 = game.add.sprite(400, 50, 'redNote');
+    sprite1 = game.add.sprite(200, 5, 'redNote');
     sprite1.origHeight = sprite1.height;
     console.log("REDNOTE",sprite1);
+
+    sprite2 = game.add.sprite(400, 50, 'redNote');
+    sprite2.origHeight = sprite2.height;
+
+
+
 
     platform = game.add.sprite(200, 450, 'platform');
     sprite3 = game.add.sprite(200, 50, 'block');
@@ -93,7 +99,7 @@ function create() {
 
     // console.log("NOTES",notes);
 
-    game.physics.arcade.enable([sprite1,platform,sprite3,sprite4,sprite5,rectA,rectB], Phaser.Physics.ARCADE);
+    game.physics.arcade.enable([sprite1,platform,sprite2,sprite4,sprite5,rectA,rectB], Phaser.Physics.ARCADE);
     
     // setSize --> (width,height, x, y)  top of canvas is y = 0, left x = 0
     rectA.body.setSize(30, 150, 200, 50); // set the size of the rectangle
@@ -115,6 +121,7 @@ A Tween allows you to alter one or more properties of a target object over
  */
 
     game.add.tween(sprite1).to({ y: 600 }, 8000, Phaser.Easing.Linear.None, true);
+    game.add.tween(sprite2).to({ y: 600 }, 8000, Phaser.Easing.Linear.None, true);
     
     // game.add.tween(rectA).to( { y: 600 }, 8000, Phaser.Easing.Linear.None, true);
     // game.add.tween(sprite4).to( { y: 600 }, 10000, Phaser.Easing.Linear.None, true);
@@ -143,7 +150,7 @@ function update() {
 
 
     game.physics.arcade.overlap(sprite1, platform, overlapHandler, processHandler, this);
-    // game.physics.arcade.overlap(sprite4, platform, overlapHandler, processHandler, this);
+    game.physics.arcade.overlap(sprite2, platform, overlapHandler, processHandler, this);
     // game.physics.arcade.overlap(sprite5, platform, overlapHandler, processHandler, this);
 }
 
@@ -176,6 +183,9 @@ function processHandler(obj1,obj2){
   }
 // }
 
+
+// 1/12/2016
+//this func doesn't fully destroy the redNote.....
 function processHandler2(obj1,obj2){
   // console.log("PROCESS HANDLER..");
   if(obj1.y > obj2.y){
@@ -185,12 +195,12 @@ function processHandler2(obj1,obj2){
     // console.log("FALSE!");
 
     // BIG NOTE
-    if (L.isDown && obj1.origHeight >= 150)
+    if (L.isDown && obj1.origHeight >= 100)
     {
       obj1.height--;
       console.log("LEFT IS HIT!");
       // game.stage.backgroundColor = '#00FFFF';
-      if(obj1.height <= 0){
+      if(obj1.height <= 10){
         obj1.destroy();
         console.log("DESTROYED!");
       }
