@@ -6,6 +6,7 @@ function preload() {
 
     game.load.image('block', 'assets/Block-3.gif');
     game.load.image('platform', 'assets/platform.png');
+    game.load.image('redNote', 'assets/redNote.png');
 
 }
 
@@ -19,13 +20,19 @@ var rectA;
 var rectB;
 var rectC;
 var horiz;
-var A;
+
+/* CONTROLS */
+var A,S,D,F,G,H,I,J,K,L;
 
 var notes;
+var note;
 
 function create() {
 
+    notes = game.add.group();
+
     A = game.input.keyboard.addKey(Phaser.Keyboard.A);
+    L = game.input.keyboard.addKey(Phaser.Keyboard.L);
 
     game.physics.setBoundsToWorld();
 
@@ -39,15 +46,13 @@ function create() {
 
 
 
-    /* Attempt to make a GROUP */ 
 
-    notes = game.add.group();
+    /* Attempt to make a GROUP */ 
 
 
     // 200 X 200 from the bottom of game
     rectA = game.add.sprite(0, 0, null);
     rectB = game.add.sprite(0, 0, null);
-    rectC = game.add.sprite(0, 0, null);
     // game.physics.enable(rectA, Phaser.Physics.ARCADE);
 
     // rectB = game.add.sprite(0, 0, null);
@@ -63,26 +68,37 @@ function create() {
     // console.log(rectB.y);
     // console.log(rectB.x);
 
-    sprite1 = game.add.sprite(400, 50, 'block');
+
+    sprite1 = game.add.sprite(400, 50, 'redNote');
+    sprite1.origHeight = sprite1.height;
+    console.log("REDNOTE",sprite1);
+
     platform = game.add.sprite(200, 450, 'platform');
-    // platform = game.add.sprite(200, 450, 'platform');
     sprite3 = game.add.sprite(200, 50, 'block');
     sprite4 = game.add.sprite(200, 50, 'block');
     sprite5 = game.add.sprite(200, 50, 'block');
 
     console.log("sprite1",sprite1);
-    console.log("platform",platform);
+    // console.log("platform",platform);
 
-    console.log("rectA",rectA);
+    // console.log("rectA",rectA);
 
+    // notes.enableBody = true;
+    // for(var i=0; i<3;i++){
+    //   var note = notes.create(i*250,50,'redNote');
+    //   note.origHeight = note.body.height;
+    //   game.add.tween(note).to( { y: 600 }, 2000, Phaser.Easing.Linear.None, true);
+    //   console.log("each NOTE:",note);
+    // }
 
+    // console.log("NOTES",notes);
 
-    game.physics.arcade.enable([ sprite1,platform,sprite3,sprite4,sprite5,rectA,rectB,rectC ], Phaser.Physics.ARCADE);
+    game.physics.arcade.enable([sprite1,platform,sprite3,sprite4,sprite5,rectA,rectB], Phaser.Physics.ARCADE);
     
     // setSize --> (width,height, x, y)  top of canvas is y = 0, left x = 0
     rectA.body.setSize(30, 150, 200, 50); // set the size of the rectangle
-    rectB.body.setSize(30, 150, 400, 50); // set the size of the rectangle
-    rectC.body.setSize(30, 150, 300, 50); // set the size of the rectangle
+    // rectB.body.setSize(30, 150, 400, 50); // set the size of the rectangle
+    // note.body.setSize(20, 20, 0, 0); // set the size of the rectangle
 /*
 ***TWEEN***
 
@@ -98,65 +114,51 @@ A Tween allows you to alter one or more properties of a target object over
  Tween and all of its children.
  */
 
-
-
-
-
-    // game.add.tween(sprite1).to( { y: 600 }, 5000, Phaser.Easing.Linear.None, true);
-    // game.add.tween(sprite3).to( { y: 600 }, 8000, Phaser.Easing.Linear.None, true);
+    game.add.tween(sprite1).to({ y: 600 }, 8000, Phaser.Easing.Linear.None, true);
+    
+    // game.add.tween(rectA).to( { y: 600 }, 8000, Phaser.Easing.Linear.None, true);
     // game.add.tween(sprite4).to( { y: 600 }, 10000, Phaser.Easing.Linear.None, true);
     // game.add.tween(sprite5).to( { y: 600 }, 11000, Phaser.Easing.Linear.None, true);
-    game.add.tween(rectA).to( { y: 600 }, 2000, Phaser.Easing.Linear.None, true);
-    game.add.tween(rectB).to( { y: 600 }, 2000, Phaser.Easing.Linear.None, true);
-    game.add.tween(rectC).to( { y: 600 }, 5000, Phaser.Easing.Linear.None, true);
-    rectA.origHeight = rectA.body.height;
-    rectB.origHeight = rectB.body.height;
-    console.log("RECT A",rectA);
-    cursors = game.input.keyboard.createCursorKeys();
+    // game.add.tween(notes).to( { y: 600 }, 2000, Phaser.Easing.Linear.None, true);
+    // game.add.tween(rectB).to( { y: 600 }, 2000, Phaser.Easing.Linear.None, true);
+    // game.add.tween(rectC).to( { y: 600 }, 5000, Phaser.Easing.Linear.None, true);
+    // rectA.origHeight = rectA.body.height;
+    // rectB.origHeight = rectB.body.height;
+    // console.log("RECT A",rectA);
+    // cursors = game.input.keyboard.createCursorKeys();
 }
 
 function update() {
 
-    sprite1.events.onOutOfBounds.add(check,this);
-
-    // console.log(rectA.y);
 
 
-    // if(sprite1.onOutOfBounds){
-    //   console.log("OUT OF BOUNDS!");
-    // }
-
-   
 
 
     // game.physics.arcade.collide(rectA, horiz, collisionHandler, null, this);
     // game.physics.arcade.collide(rectB, horiz, collisionHandler, null, this);
     //check for overlap, passing in 2 callbacks
-    game.physics.arcade.overlap(rectA, platform, overlapHandler, processHandler, this);
-    game.physics.arcade.overlap(rectB, platform, overlapHandler, processHandler2, this);
+    // game.physics.arcade.overlap(notes, platform, overlapHandler, processHandler);
+    // game.physics.arcade.overlap(rectA, platform, overlapHandler, processHandler2, this);
     
 
 
-    game.physics.arcade.overlap(sprite3, platform, overlapHandler, processHandler, this);
-    game.physics.arcade.overlap(sprite4, platform, overlapHandler, processHandler, this);
-    game.physics.arcade.overlap(sprite5, platform, overlapHandler, processHandler, this);
+    game.physics.arcade.overlap(sprite1, platform, overlapHandler, processHandler, this);
+    // game.physics.arcade.overlap(sprite4, platform, overlapHandler, processHandler, this);
+    // game.physics.arcade.overlap(sprite5, platform, overlapHandler, processHandler, this);
 }
 
-function check(){
 
-  console.log("HI!");
-}
 
 function processHandler(obj1,obj2){
   // console.log("PROCESS HANDLER..");
-  if(obj1.y > obj2.y){
-    // console.log("TRUE!");
-    return true;
-  }else{
-    // console.log("FALSE!");
+  // if(obj1.y > obj2.y){
+  //   // console.log("TRUE!");
+  //   return true;
+  // }else{
+  //   // console.log("FALSE!");
 
-    // BIG NOTE
-    if (A.isDown && obj1.origHeight >= 150)
+  //   // BIG NOTE
+    if (A.isDown && obj1.origHeight >= 100)
     {
       obj1.height--;
       console.log("LEFT IS HIT!");
@@ -172,7 +174,7 @@ function processHandler(obj1,obj2){
     }
     return false;
   }
-}
+// }
 
 function processHandler2(obj1,obj2){
   // console.log("PROCESS HANDLER..");
@@ -183,7 +185,7 @@ function processHandler2(obj1,obj2){
     // console.log("FALSE!");
 
     // BIG NOTE
-    if (cursors.right.isDown && obj1.origHeight >= 150)
+    if (L.isDown && obj1.origHeight >= 150)
     {
       obj1.height--;
       console.log("LEFT IS HIT!");
@@ -192,7 +194,7 @@ function processHandler2(obj1,obj2){
         obj1.destroy();
         console.log("DESTROYED!");
       }
-    }else if(cursors.right.isDown){
+    }else if(L.isDown){
        obj1.destroy();
        console.log("Right IS HIT!");
       // game.stage.backgroundColor = '#006400';
@@ -203,7 +205,7 @@ function processHandler2(obj1,obj2){
 
 function overlapHandler (obj1, obj2) {
 
-    game.stage.backgroundColor = '#992d2d';
+    // game.stage.backgroundColor = '#992d2d';
     console.log("OVERLAP!");
     // obj2.kill();
 }
@@ -230,6 +232,7 @@ function render() {
 
     game.debug.body(sprite1);
     game.debug.body(platform);
+    game.debug.body(notes);
 
 }
 
